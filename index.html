@@ -39,7 +39,7 @@
   .topbar{
     position:sticky; top:0; z-index:20;
     display:flex; align-items:center; justify-content:space-between;
-    gap:18px;
+    gap:16px;
     padding:14px clamp(16px,4vw,40px);
     background:rgba(10,12,17,.72);
     backdrop-filter: blur(16px) saturate(150%);
@@ -55,13 +55,10 @@
     box-shadow:0 8px 24px -8px rgba(109,140,255,.9);
     color:#08101f; font-size:15px;
   }
-  .brand h1{
-    margin:0; font-size:16px; font-weight:700; letter-spacing:-.01em;
-    white-space:nowrap;
-  }
+  .brand h1{ margin:0; font-size:16px; font-weight:700; letter-spacing:-.01em; white-space:nowrap; }
   .brand p{ margin:2px 0 0; font-size:12px; color:var(--muted); }
 
-  .search{ position:relative; flex:1; max-width:380px; }
+  .search{ position:relative; flex:1; max-width:360px; }
   .search svg{
     position:absolute; left:14px; top:50%; transform:translateY(-50%);
     width:16px; height:16px; opacity:.5; pointer-events:none;
@@ -75,10 +72,57 @@
     transition:border-color .2s, box-shadow .2s;
   }
   .search input::placeholder{ color:#65708a; }
-  .search input:focus{
-    border-color:rgba(109,140,255,.75);
-    box-shadow:0 0 0 4px rgba(109,140,255,.15);
+  .search input:focus{ border-color:rgba(109,140,255,.75); box-shadow:0 0 0 4px rgba(109,140,255,.15); }
+
+  .topbar-actions{ display:flex; gap:8px; align-items:center; flex:0 0 auto; }
+
+  .btn-primary{
+    display:inline-flex; align-items:center; gap:6px;
+    padding:9px 15px; border-radius:10px; border:none;
+    background:linear-gradient(135deg, var(--accent), var(--accent-2));
+    color:#08101f; font:inherit; font-weight:700; font-size:13px;
+    cursor:pointer;
+    transition: transform .15s, box-shadow .2s;
+    box-shadow:0 8px 20px -8px rgba(109,140,255,.8);
+    white-space:nowrap;
   }
+  .btn-primary:hover{ transform:translateY(-1px); box-shadow:0 12px 24px -10px rgba(109,140,255,.95); }
+  .btn-primary:active{ transform:translateY(0); }
+  .btn-primary svg{ flex:0 0 auto; }
+
+  .menu-wrap{ position:relative; }
+  .menu{
+    position:absolute; top:calc(100% + 6px); right:0; z-index:30;
+    min-width:210px; padding:6px;
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:12px;
+    box-shadow:0 20px 40px -12px #000;
+    animation: pop .18s ease;
+  }
+  .menu button{
+    display:block; width:100%; padding:9px 12px;
+    text-align:left; font:inherit; font-size:13px;
+    color:var(--text); background:transparent;
+    border:none; border-radius:8px; cursor:pointer;
+    transition:background .15s;
+  }
+  .menu button:hover{ background:var(--surface-2); }
+  .menu button.danger{ color:#ff9a9a; }
+  .menu button.danger:hover{ background:rgba(239,68,68,.15); }
+
+  .icon-btn{
+    flex:0 0 auto;
+    width:34px; height:34px; border-radius:10px;
+    display:grid; place-items:center;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    color:var(--text); font-size:15px; line-height:1;
+    cursor:pointer;
+    transition: background .2s, border-color .2s, transform .2s;
+  }
+  .icon-btn:hover{ background:#232c40; border-color:rgba(109,140,255,.6); }
+  .icon-btn:active{ transform:scale(.94); }
 
   /* ---------- GRID ---------- */
   .grid{
@@ -88,28 +132,32 @@
     padding: clamp(18px,3vw,32px) clamp(16px,4vw,40px) 70px;
   }
 
-  .tile{
+  .tile-wrap{
     position:relative;
-    aspect-ratio: 1 / 1;          /* 👈 perfect squares */
+    aspect-ratio: 1 / 1;
     border-radius:var(--radius);
     overflow:hidden;
     border:1px solid var(--line);
     background:var(--surface);
-    padding:0; margin:0;
-    cursor:pointer;
-    font:inherit; color:inherit; text-align:left;
     transition: transform .28s cubic-bezier(.2,.8,.3,1),
                 border-color .28s, box-shadow .28s;
     isolation:isolate;
   }
-  .tile:hover,
-  .tile:focus-visible{
+  .tile-wrap:hover,
+  .tile-wrap:focus-within{
     transform: translateY(-5px) scale(1.02);
     border-color: rgba(109,140,255,.65);
     box-shadow: 0 22px 46px -22px rgba(109,140,255,.85);
-    outline:none;
   }
-  .tile:active{ transform: translateY(-2px) scale(1.0); }
+
+  .tile{
+    position:absolute; inset:0;
+    padding:0; margin:0;
+    border:none; background:transparent;
+    cursor:pointer; font:inherit; color:inherit; text-align:left;
+    overflow:hidden;
+  }
+  .tile:focus{ outline:none; }
 
   .thumb{
     position:absolute; inset:0;
@@ -122,8 +170,7 @@
   .thumb::after{
     content: attr(data-initials);
     font-size: clamp(24px, 4vw, 34px);
-    font-weight:800;
-    letter-spacing:.04em;
+    font-weight:800; letter-spacing:.04em;
     color:rgba(255,255,255,.85);
     text-shadow:0 2px 12px rgba(0,0,0,.4);
   }
@@ -132,7 +179,7 @@
     width:100%; height:100%; object-fit:cover;
     transition: transform .55s ease;
   }
-  .tile:hover .thumb img{ transform: scale(1.09); }
+  .tile-wrap:hover .thumb img{ transform: scale(1.09); }
 
   .badge{
     position:absolute; top:10px; left:10px; z-index:2;
@@ -156,8 +203,8 @@
     pointer-events:none;
   }
   .play svg{ width:20px; height:20px; fill:#fff; margin-left:3px; }
-  .tile:hover .play,
-  .tile:focus-visible .play{ opacity:1; transform: scale(1); }
+  .tile-wrap:hover .play,
+  .tile-wrap:focus-within .play{ opacity:1; transform: scale(1); }
 
   .meta{
     position:absolute; left:0; right:0; bottom:0; z-index:2;
@@ -165,20 +212,44 @@
     background:linear-gradient(to top, rgba(0,0,0,.92) 12%, rgba(0,0,0,.55) 55%, transparent);
   }
   .meta .name{
-    display:block;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
+    overflow:hidden;
     font-size:13px; font-weight:600; line-height:1.32;
     color:#fff;
     text-shadow:0 1px 6px rgba(0,0,0,.6);
-    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical;
-    overflow:hidden;
   }
+
+  .tile-actions{
+    position:absolute; top:8px; right:8px; z-index:6;
+    display:flex; gap:5px;
+    opacity:0; transform: translateY(-4px);
+    transition: opacity .2s, transform .2s;
+  }
+  .tile-wrap:hover .tile-actions,
+  .tile-wrap:focus-within .tile-actions{ opacity:1; transform:none; }
+
+  .tile-action{
+    width:28px; height:28px; border-radius:8px;
+    border:1px solid rgba(255,255,255,.2);
+    background: rgba(0,0,0,.6);
+    backdrop-filter: blur(8px);
+    color:#fff; font-size:13px;
+    display:grid; place-items:center;
+    cursor:pointer;
+    transition: background .2s, border-color .2s, transform .15s;
+  }
+  .tile-action:hover{ background: rgba(109,140,255,.85); border-color:rgba(255,255,255,.4); }
+  .tile-action:active{ transform: scale(.92); }
+  .tile-action.delete:hover{ background: rgba(239,68,68,.85); }
 
   .empty{
     text-align:center; color:var(--muted); font-size:14px;
     padding:60px 20px;
   }
+  .empty p{ margin:0 0 14px; }
+  .empty .btn-primary{ margin: 0 auto; }
 
-  /* ---------- PLAYER OVERLAY ---------- */
+  /* ---------- OVERLAYS ---------- */
   .overlay{
     position:fixed; inset:0; z-index:100;
     display:grid; place-items:center;
@@ -194,6 +265,7 @@
     to  { opacity:1; transform: none; }
   }
 
+  /* ---------- PLAYER ---------- */
   .player{
     width:min(1220px, 100%);
     background:var(--surface);
@@ -219,8 +291,6 @@
     white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
     flex:1;
   }
-
-  /* popup blocker badge */
   .popup-shield{
     display:inline-flex; align-items:center; gap:5px;
     font-size:11px; font-weight:600; color:#9fb0d0;
@@ -231,19 +301,6 @@
     user-select:none;
   }
   .popup-shield svg{ width:12px; height:12px; fill:currentColor; }
-
-  .icon-btn{
-    flex:0 0 auto;
-    width:34px; height:34px; border-radius:10px;
-    display:grid; place-items:center;
-    background:var(--surface-2);
-    border:1px solid var(--line);
-    color:var(--text); font-size:15px; line-height:1;
-    cursor:pointer;
-    transition: background .2s, border-color .2s, transform .2s;
-  }
-  .icon-btn:hover{ background:#232c40; border-color:rgba(109,140,255,.6); }
-  .icon-btn:active{ transform:scale(.94); }
 
   .stage{
     position:relative;
@@ -259,7 +316,6 @@
     background:#000;
   }
 
-  /* loader */
   .loader{
     position:absolute; inset:0; margin:auto;
     width:42px; height:42px; border-radius:50%;
@@ -277,6 +333,89 @@
     background:#0a0c11;
   }
 
+  /* ---------- FORM MODAL ---------- */
+  .form-card{
+    width:min(520px, 100%);
+    background:var(--surface);
+    border:1px solid var(--line);
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow: 0 50px 120px -40px #000;
+    animation: pop .28s cubic-bezier(.2,.9,.3,1.15);
+  }
+  .form-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:16px 18px;
+    border-bottom:1px solid var(--line);
+  }
+  .form-head h2{ margin:0; font-size:16px; font-weight:700; }
+  .form-body{ padding:18px; display:flex; flex-direction:column; gap:14px; }
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field span{
+    font-size:11px; font-weight:600; color:var(--muted);
+    text-transform:uppercase; letter-spacing:.07em;
+  }
+  .field em{ font-style:normal; font-weight:400; text-transform:none; letter-spacing:0; opacity:.6; }
+  .field input{
+    padding:11px 14px;
+    border-radius:10px;
+    background:var(--surface-2);
+    border:1px solid var(--line);
+    color:var(--text);
+    font:inherit; font-size:14px;
+    outline:none;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .field input:focus{
+    border-color:rgba(109,140,255,.75);
+    box-shadow:0 0 0 3px rgba(109,140,255,.15);
+  }
+  .type-hint{
+    font-size:12px; color:var(--muted);
+    padding:8px 12px;
+    background:rgba(109,140,255,.08);
+    border:1px dashed rgba(109,140,255,.25);
+    border-radius:8px;
+  }
+  .type-hint b{ color:var(--accent-2); }
+  .form-foot{
+    display:flex; justify-content:flex-end; gap:10px;
+    padding:14px 18px;
+    border-top:1px solid var(--line);
+    background:rgba(255,255,255,.015);
+  }
+  .btn-ghost{
+    padding:9px 16px; border-radius:10px;
+    border:1px solid var(--line);
+    background:transparent; color:var(--text);
+    font:inherit; font-size:13px; font-weight:600;
+    cursor:pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .btn-ghost:hover{ background:var(--surface-2); border-color:rgba(109,140,255,.4); }
+
+  /* ---------- TOAST ---------- */
+  .toast{
+    position:fixed; bottom:24px; left:50%;
+    transform: translateX(-50%);
+    z-index:300;
+    padding:12px 20px;
+    background: rgba(20,26,38,.95);
+    border:1px solid var(--line);
+    border-radius:12px;
+    font-size:13px; font-weight:500;
+    color:var(--text);
+    box-shadow: 0 20px 40px -12px #000;
+    backdrop-filter: blur(12px);
+    max-width: min(500px, 90vw);
+    animation: toastIn .25s cubic-bezier(.2,.9,.3,1.1);
+    pointer-events:none;
+  }
+  .toast.error{ color:#ffb4b4; border-color: rgba(239,68,68,.4); }
+  .toast.hiding{ animation: toastOut .2s ease forwards; }
+  @keyframes toastIn{ from{ opacity:0; transform:translateX(-50%) translateY(20px); } to{ opacity:1; transform:translateX(-50%) translateY(0); } }
+  @keyframes toastOut{ to{ opacity:0; transform:translateX(-50%) translateY(20px); } }
+
   /* ---------- RESPONSIVE ---------- */
   @media (max-width: 720px){
     .grid{ grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
@@ -285,6 +424,7 @@
     .topbar{ flex-wrap:wrap; }
     .search{ order:3; flex-basis:100%; max-width:none; }
     .player{ border-radius:14px; }
+    .form-card{ border-radius:14px; }
     .stage{ max-height: calc(100dvh - 150px); }
   }
   @media (prefers-reduced-motion: reduce){
@@ -311,13 +451,33 @@
     </svg>
     <input id="search" type="search" placeholder="Search library…" autocomplete="off" />
   </div>
+
+  <div class="topbar-actions">
+    <button class="btn-primary" id="addBtn">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+      Add
+    </button>
+    <div class="menu-wrap">
+      <button class="icon-btn" id="menuBtn" aria-label="Library menu">⋯</button>
+      <div class="menu" id="menu" hidden>
+        <button data-action="export">Export library…</button>
+        <button data-action="import">Import library…</button>
+        <button data-action="clear" class="danger">Clear my custom items</button>
+      </div>
+    </div>
+  </div>
 </header>
 
 <!-- ================= GRID ================= -->
 <main>
   <div id="grid" class="grid"></div>
-  <p id="empty" class="empty" hidden>Nothing matches that search.</p>
+  <div id="empty" class="empty" hidden>
+    <p>Nothing here yet.</p>
+    <button class="btn-primary" id="emptyAddBtn">+ Add your first video</button>
+  </div>
 </main>
+
+<input type="file" id="importInput" accept=".json,application/json" hidden />
 
 <!-- ================= PLAYER OVERLAY ================= -->
 <div id="overlay" class="overlay" hidden role="dialog" aria-modal="true" aria-label="Video player">
@@ -325,8 +485,6 @@
     <div class="player-head">
       <span class="dot"></span>
       <h2 id="playerTitle">Now playing</h2>
-
-      <!-- popup blocker badge -->
       <span class="popup-shield" title="Popups and new tabs are blocked for your safety">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path d="M12 2 4 5v6c0 5 3.4 9.3 8 10 4.6-.7 8-5 8-10V5l-8-3zm0 3.2 5 1.9v4.9c0 3.7-2.4 6.9-5 7.6-2.6-.7-5-3.9-5-7.6V7.1l5-1.9z"/>
@@ -334,48 +492,60 @@
         </svg>
         Popups blocked
       </span>
-
       <button id="closeBtn" class="icon-btn" aria-label="Close player">✕</button>
     </div>
     <div class="stage" id="stage"></div>
   </div>
 </div>
 
+<!-- ================= ADD / EDIT FORM ================= -->
+<div id="formOverlay" class="overlay" hidden role="dialog" aria-modal="true" aria-labelledby="formTitle">
+  <form id="itemForm" class="form-card" autocomplete="off">
+    <div class="form-head">
+      <h2 id="formTitle">Add a video</h2>
+      <button type="button" class="icon-btn" id="formClose" aria-label="Close">✕</button>
+    </div>
+    <div class="form-body">
+      <label class="field">
+        <span>Title</span>
+        <input name="title" required maxlength="120" placeholder="e.g. My favorite stream" />
+      </label>
+      <label class="field">
+        <span>Link (URL)</span>
+        <input name="src" type="url" required placeholder="https://..." />
+      </label>
+      <label class="field">
+        <span>Thumbnail URL <em>(optional)</em></span>
+        <input name="thumb" type="url" placeholder="https://.../image.jpg" />
+      </label>
+      <label class="field">
+        <span>Poster URL <em>(optional, video only)</em></span>
+        <input name="poster" type="url" placeholder="https://.../poster.jpg" />
+      </label>
+      <div class="type-hint" id="typeHint">Type: <b>Embed</b></div>
+    </div>
+    <div class="form-foot">
+      <button type="button" class="btn-ghost" id="formCancel">Cancel</button>
+      <button type="submit" class="btn-primary" id="formSubmit">Add to library</button>
+    </div>
+  </form>
+</div>
+
+<!-- ================= TOAST ================= -->
+<div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+
 <!-- HLS.js for .m3u8 playback -->
 <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.13/dist/hls.min.js"></script>
 
 <script>
 /* =========================================================================
-   👇👇  PASTE YOUR LINKS HERE  👇👇
+   👇👇  PASTE YOUR LINKS HERE (these are the "defaults")  👇👇
    -------------------------------------------------------------------------
-   title    : name shown on the tile                  (required)
-   src      : the link                                 (required)
-              • iframe embeds → use the EMBED url, e.g.
-                https://www.youtube.com/embed/VIDEO_ID
-                https://player.vimeo.com/video/123456
-                https://www.dailymotion.com/embed/video/xxxxx
-              • HLS streams   → https://example.com/live/stream.m3u8
-              • plain video   → https://example.com/movie.mp4
-   type     : "iframe" | "hls" | "video"   → optional, auto-detected
-   thumb    : optional square image URL for the tile
-   poster   : optional poster image for hls/video
-   autoplay : optional, default true
+   Anything in this array is READ-ONLY in the UI. Users can add their own
+   items through the "+ Add" form; those are stored in localStorage.
    ========================================================================= */
 
 const MEDIA = [
-
-  {
-        title: "Brewers vs Rays",
-    src:   "https://admin2.formaturamaxi.com.br/mlb.m3u8",
-    type:  "hls",
-    thumb: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQJGlfjkYp9mlChJHJlEk1EsxgJlmmCw7R9hOxplJpjr3qogec26p_dnrAj&s=10"
-  },
-{
-    title: "Guadalajara vs Atlante",
-    src:   "https://admin2.formaturamaxi.com.br/nba.m3u8",
-    type:  "hls",
-    thumb:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSY5mQ2ExGxxhwHi1xTa3x5UYUChOxQiXmi2gXB6YQ52gTp57fiSKNk_4_B&s=10"
-  },
 
   {
     title: "Canal 5",
@@ -391,46 +561,100 @@ const MEDIA = [
     thumb: "https://thumb.wikimedia.org/wikipedia/commons/thumb/2/23/Logo_Azteca_7_2011.svg/1280px-Logo_Azteca_7_2011.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail"
   },
 
+  {
+    title: "Guadalajara vs Atlante",
+    src:   "",
+    type:  "hls",
+    thumb:"https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSY5mQ2ExGxxhwHi1xTa3x5UYUChOxQiXmi2gXB6YQ52gTp57fiSKNk_4_B&s=10"
+  },
 
-  /* ⬇️ keep adding objects here, separated by commas ⬇️ */
-  // { title: "My Stream", src: "https://my.site/live.m3u8" },
+  {
+    title: "Panthers vs Packers",
+    src:   "",
+    type:  "hls",
+    thumb:"https://s.espncdn.com/stitcher/sports/football/nfl/events/401873023.png?templateId=espn.com.share.1"
+  },
+
+  {
+    title: "Chiefs vs Broncos",
+    src:   "",
+    type:  "hls",
+    thumb:"https://s.espncdn.com/stitcher/sports/football/nfl/events/401873033.png?templateId=espn.com.share.1"
+  },
+
+  {
+    title: "49ers vs Raiders",
+    src:   "",
+    type:  "hls",
+    thumb:"https://s.espncdn.com/stitcher/sports/football/nfl/events/221103013.png?templateId=espn.com.share.1"
+  }
+
 ];
 
 /* =========================================================================
-   POPUP BLOCKER (global, for this page's context)
+   POPUP BLOCKER (global)
    ========================================================================= */
 
-/* 1) Override window.open for any scripts running on this page */
 const _originalWindowOpen = window.open;
 window.open = function (...args) {
   console.warn("StreamDeck: window.open blocked →", args[0]);
   return null;
 };
 
-/* 2) Intercept target="_blank" links inside our document */
-document.addEventListener(
-  "click",
-  function (e) {
-    const link = e.target.closest && e.target.closest('a[target="_blank"]');
-    if (link) {
-      e.preventDefault();
-      console.warn("StreamDeck: new tab blocked →", link.href);
-    }
-  },
-  true
-);
+document.addEventListener("click", function (e) {
+  const link = e.target.closest && e.target.closest('a[target="_blank"]');
+  if (link) {
+    e.preventDefault();
+    console.warn("StreamDeck: new tab blocked →", link.href);
+  }
+}, true);
 
 /* =========================================================================
-   Below this line = the engine. You normally don't need to touch it.
+   Storage layer — user items live in localStorage
    ========================================================================= */
 
-/* ---------- helpers ---------- */
-const $ = (sel) => document.querySelector(sel);
+const STORAGE_KEY = "streamdeck_user_items_v1";
+
+function uid() {
+  return "i_" + Math.random().toString(36).slice(2, 9) + Date.now().toString(36);
+}
+
+let userItems = [];
+try {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) {
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) userItems = parsed;
+  }
+} catch (e) {
+  console.warn("StreamDeck: could not read localStorage", e);
+}
+
+function saveUserItems() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(userItems));
+  } catch (e) {
+    toast("Could not save — storage is full", "error");
+  }
+}
+
+function combinedItems() {
+  return [
+    ...MEDIA.map(m => ({ ...m, _isDefault: true })),
+    ...userItems.map(u => ({ ...u, _isDefault: false }))
+  ];
+}
+
+/* =========================================================================
+   Helpers
+   ========================================================================= */
+
+const $ = (s) => document.querySelector(s);
 
 const TYPE_LABEL = { iframe: "Embed", hls: "Live / HLS", video: "Video" };
 
 function detectType(src, type) {
-  if (type) return type.toLowerCase();
+  if (type) return String(type).toLowerCase();
   const clean = String(src).split("?")[0].split("#")[0].toLowerCase();
   if (clean.endsWith(".m3u8") || clean.endsWith(".m3u")) return "hls";
   if (/\.(mp4|webm|ogv|ogg|m4v|mov)$/.test(clean)) return "video";
@@ -450,33 +674,65 @@ function initialsFrom(str) {
   return (words[0][0] + words[1][0]).toUpperCase();
 }
 
-/* ---------- build the grid ---------- */
-const gridEl     = $("#grid");
-const emptyEl    = $("#empty");
-const countEl    = $("#count");
-const searchEl   = $("#search");
-const overlayEl  = $("#overlay");
-const stageEl    = $("#stage");
-const titleEl    = $("#playerTitle");
-const closeBtn   = $("#closeBtn");
+/* =========================================================================
+   Toasts
+   ========================================================================= */
 
-const tiles = [];
+const toastEl = $("#toast");
+let toastTimer;
 
-function buildGrid() {
+function toast(msg, kind) {
+  clearTimeout(toastTimer);
+  toastEl.classList.remove("error", "hiding");
+  if (kind === "error") toastEl.classList.add("error");
+  toastEl.textContent = msg;
+  toastEl.hidden = false;
+  void toastEl.offsetWidth; // restart animation
+  toastTimer = setTimeout(() => {
+    toastEl.classList.add("hiding");
+    setTimeout(() => { toastEl.hidden = true; toastEl.classList.remove("hiding"); }, 200);
+  }, 2200);
+}
+
+/* =========================================================================
+   Grid rendering
+   ========================================================================= */
+
+const gridEl  = $("#grid");
+const emptyEl = $("#empty");
+const countEl = $("#count");
+const searchEl = $("#search");
+
+let tileWraps = [];
+
+function renderGrid() {
+  gridEl.innerHTML = "";
+  tileWraps = [];
+
+  const items = combinedItems();
+
+  if (!items.length) {
+    emptyEl.hidden = false;
+    updateCount(0);
+    return;
+  }
+  emptyEl.hidden = true;
+
   const frag = document.createDocumentFragment();
 
-  MEDIA.forEach((item, index) => {
+  items.forEach((item) => {
     const type = detectType(item.src, item.type);
     const title = item.title || "Untitled";
+
+    const wrap = document.createElement("div");
+    wrap.className = "tile-wrap";
+    wrap.dataset.title = title.toLowerCase();
 
     const tile = document.createElement("button");
     tile.type = "button";
     tile.className = "tile";
-    tile.dataset.title = title.toLowerCase();
-    tile.dataset.index = index;
     tile.setAttribute("aria-label", "Play " + title);
 
-    /* thumbnail / gradient fallback */
     const thumb = document.createElement("div");
     thumb.className = "thumb";
     thumb.dataset.initials = initialsFrom(title);
@@ -492,18 +748,14 @@ function buildGrid() {
       thumb.appendChild(img);
     }
 
-    /* badge */
     const badge = document.createElement("span");
     badge.className = "badge";
     badge.textContent = TYPE_LABEL[type] || type;
 
-    /* play icon */
     const play = document.createElement("span");
     play.className = "play";
-    play.innerHTML =
-      '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
+    play.innerHTML = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>';
 
-    /* title bar */
     const meta = document.createElement("div");
     meta.className = "meta";
     const name = document.createElement("span");
@@ -514,34 +766,81 @@ function buildGrid() {
     tile.append(thumb, badge, play, meta);
     tile.addEventListener("click", () => openPlayer(item));
 
-    frag.appendChild(tile);
-    tiles.push(tile);
+    wrap.appendChild(tile);
+
+    // Action buttons only for user items
+    if (!item._isDefault) {
+      const actions = document.createElement("div");
+      actions.className = "tile-actions";
+
+      const editBtn = document.createElement("button");
+      editBtn.type = "button";
+      editBtn.className = "tile-action";
+      editBtn.title = "Edit";
+      editBtn.setAttribute("aria-label", "Edit " + title);
+      editBtn.textContent = "✎";
+      editBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openForm(item);
+      });
+
+      const delBtn = document.createElement("button");
+      delBtn.type = "button";
+      delBtn.className = "tile-action delete";
+      delBtn.title = "Delete";
+      delBtn.setAttribute("aria-label", "Delete " + title);
+      delBtn.textContent = "✕";
+      delBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        deleteItem(item._id);
+      });
+
+      actions.append(editBtn, delBtn);
+      wrap.appendChild(actions);
+    }
+
+    frag.appendChild(wrap);
+    tileWraps.push(wrap);
   });
 
   gridEl.appendChild(frag);
-  updateCount(MEDIA.length);
+  updateCount(items.length);
+  applyFilter();
 }
 
 function updateCount(n) {
   countEl.textContent = n + (n === 1 ? " item" : " items") + " in library";
 }
 
-/* ---------- search filter ---------- */
-searchEl.addEventListener("input", () => {
+function applyFilter() {
   const q = searchEl.value.trim().toLowerCase();
   let visible = 0;
 
-  tiles.forEach((tile) => {
-    const match = !q || tile.dataset.title.includes(q);
-    tile.hidden = !match;
+  tileWraps.forEach((wrap) => {
+    const match = !q || wrap.dataset.title.includes(q);
+    wrap.hidden = !match;
     if (match) visible++;
   });
 
   emptyEl.hidden = visible > 0;
-  updateCount(visible);
-});
+  if (visible > 0) {
+    updateCount(tileWraps.length);
+  } else {
+    countEl.textContent = "0 matches";
+  }
+}
 
-/* ---------- player ---------- */
+searchEl.addEventListener("input", applyFilter);
+
+/* =========================================================================
+   Player
+   ========================================================================= */
+
+const overlayEl = $("#overlay");
+const stageEl   = $("#stage");
+const titleEl   = $("#playerTitle");
+const closeBtn  = $("#closeBtn");
+
 let activeHls = null;
 let activeVideo = null;
 let lastFocused = null;
@@ -558,32 +857,15 @@ function openPlayer(item) {
   stageEl.innerHTML = "";
 
   if (type === "iframe") {
-    /* ---------- embedded page / player (sandboxed, popups blocked) ---------- */
     const frame = document.createElement("iframe");
     frame.src = item.src;
     frame.title = item.title || "Embedded video";
     frame.setAttribute("allowfullscreen", "");
-
-    /*
-      🔒 POPUP BLOCKER FOR IFRAMES
-      We deliberately OMIT `allow-popups` and `allow-top-navigation*`
-      so window.open(), target="_blank" and top redirects are blocked.
-      If a specific embed legitimately needs popups, add `allow-popups`
-      to the string below for that one item only.
-    */
     frame.setAttribute(
       "sandbox",
-      [
-        "allow-scripts",
-        "allow-same-origin",
-        "allow-forms",
-        "allow-presentation",
-        "allow-orientation-lock",
-        "allow-pointer-lock"
-        /* "allow-popups"  ← intentionally omitted */
-      ].join(" ")
+      ["allow-scripts","allow-same-origin","allow-forms","allow-presentation",
+       "allow-orientation-lock","allow-pointer-lock"].join(" ")
     );
-
     frame.setAttribute(
       "allow",
       "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share; fullscreen"
@@ -592,7 +874,6 @@ function openPlayer(item) {
     stageEl.appendChild(frame);
 
   } else {
-    /* ---------- native <video> (hls or direct file) ---------- */
     const video = document.createElement("video");
     video.controls = true;
     video.autoplay = item.autoplay !== false;
@@ -600,7 +881,6 @@ function openPlayer(item) {
     video.setAttribute("playsinline", "");
     if (item.poster) video.poster = item.poster;
 
-    /* spinner */
     const loader = document.createElement("div");
     loader.className = "loader";
     stageEl.append(video, loader);
@@ -611,13 +891,10 @@ function openPlayer(item) {
 
     activeVideo = video;
 
-    if (type === "hls") {
-      attachHls(video, item.src);
-    } else {
-      video.src = item.src;
-    }
+    if (type === "hls") attachHls(video, item.src);
+    else video.src = item.src;
 
-    video.play().catch(() => { /* autoplay blocked → user presses play */ });
+    video.play().catch(() => {});
   }
 
   closeBtn.focus();
@@ -625,31 +902,22 @@ function openPlayer(item) {
 
 function attachHls(video, src) {
   if (window.Hls && window.Hls.isSupported()) {
-    const hls = new window.Hls({
-      enableWorker: true,
-      lowLatencyMode: true,
-      backBufferLength: 90
-    });
-
+    const hls = new window.Hls({ enableWorker: true, lowLatencyMode: true, backBufferLength: 90 });
     hls.loadSource(src);
     hls.attachMedia(video);
     activeHls = hls;
 
     hls.on(window.Hls.Events.ERROR, (_evt, data) => {
       if (!data.fatal) return;
-      if (data.type === window.Hls.ErrorTypes.NETWORK_ERROR) {
-        hls.startLoad();
-      } else if (data.type === window.Hls.ErrorTypes.MEDIA_ERROR) {
-        hls.recoverMediaError();
-      } else {
+      if (data.type === window.Hls.ErrorTypes.NETWORK_ERROR) hls.startLoad();
+      else if (data.type === window.Hls.ErrorTypes.MEDIA_ERROR) hls.recoverMediaError();
+      else {
         showError("This stream could not be loaded. It may be offline or blocked.");
         try { hls.destroy(); } catch (e) {}
         activeHls = null;
       }
     });
-
   } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
-    /* Safari / iOS native HLS */
     video.src = src;
   } else {
     showError("HLS playback is not supported in this browser.");
@@ -664,10 +932,7 @@ function showError(message) {
 }
 
 function closePlayer() {
-  if (activeHls) {
-    try { activeHls.destroy(); } catch (e) {}
-    activeHls = null;
-  }
+  if (activeHls) { try { activeHls.destroy(); } catch (e) {} activeHls = null; }
   if (activeVideo) {
     try {
       activeVideo.pause();
@@ -676,29 +941,223 @@ function closePlayer() {
     } catch (e) {}
     activeVideo = null;
   }
-
   stageEl.innerHTML = "";
-
   if (!overlayEl.hidden) {
     overlayEl.hidden = true;
-    document.body.classList.remove("locked");
+    if (formOverlay.hidden) document.body.classList.remove("locked");
     if (lastFocused && typeof lastFocused.focus === "function") lastFocused.focus();
   }
 }
 
-/* ---------- overlay events ---------- */
 closeBtn.addEventListener("click", closePlayer);
+overlayEl.addEventListener("click", (e) => { if (e.target === overlayEl) closePlayer(); });
 
-overlayEl.addEventListener("click", (e) => {
-  if (e.target === overlayEl) closePlayer();   /* click outside → close */
+/* =========================================================================
+   Add / Edit form
+   ========================================================================= */
+
+const formOverlay = $("#formOverlay");
+const itemForm    = $("#itemForm");
+const formTitle   = $("#formTitle");
+const formSubmit  = $("#formSubmit");
+const typeHint    = $("#typeHint");
+
+let editingId = null;
+
+function openForm(item) {
+  editingId = item ? item._id : null;
+
+  formTitle.textContent   = item ? "Edit video" : "Add a video";
+  formSubmit.textContent  = item ? "Save changes" : "Add to library";
+
+  itemForm.elements.title.value  = item?.title  || "";
+  itemForm.elements.src.value    = item?.src    || "";
+  itemForm.elements.thumb.value  = item?.thumb  || "";
+  itemForm.elements.poster.value = item?.poster || "";
+
+  updateTypeHint();
+
+  closePlayer();
+  formOverlay.hidden = false;
+  document.body.classList.add("locked");
+  setTimeout(() => itemForm.elements.title.focus(), 50);
+}
+
+function closeForm() {
+  formOverlay.hidden = true;
+  if (overlayEl.hidden) document.body.classList.remove("locked");
+  editingId = null;
+}
+
+function updateTypeHint() {
+  const src = itemForm.elements.src.value.trim();
+  const t = src ? detectType(src, null) : "iframe";
+  typeHint.innerHTML = "Type: <b>" + (TYPE_LABEL[t] || t) + "</b>";
+}
+
+itemForm.elements.src.addEventListener("input", updateTypeHint);
+
+itemForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const data   = new FormData(itemForm);
+  const title  = String(data.get("title")  || "").trim();
+  const src    = String(data.get("src")    || "").trim();
+  const thumb  = String(data.get("thumb")  || "").trim();
+  const poster = String(data.get("poster") || "").trim();
+
+  if (!title || !src) { toast("Title and link are required", "error"); return; }
+
+  try { new URL(src); }
+  catch { toast("Please enter a valid URL", "error"); return; }
+
+  if (editingId) {
+    const idx = userItems.findIndex(x => x._id === editingId);
+    if (idx >= 0) {
+      userItems[idx] = {
+        ...userItems[idx],
+        title, src,
+        thumb:  thumb  || undefined,
+        poster: poster || undefined
+      };
+      toast("Saved changes");
+    }
+  } else {
+    userItems.push({
+      _id: uid(),
+      title, src,
+      thumb:  thumb  || undefined,
+      poster: poster || undefined
+    });
+    toast("Added to library");
+  }
+
+  saveUserItems();
+  renderGrid();
+  closeForm();
 });
+
+$("#formClose").addEventListener("click", closeForm);
+$("#formCancel").addEventListener("click", closeForm);
+
+function deleteItem(id) {
+  if (!confirm("Remove this video from your library?")) return;
+  userItems = userItems.filter(x => x._id !== id);
+  saveUserItems();
+  renderGrid();
+  toast("Removed");
+}
+
+/* =========================================================================
+   Library menu: export / import / clear
+   ========================================================================= */
+
+const menuBtn  = $("#menuBtn");
+const menuEl   = $("#menu");
+const importInput = $("#importInput");
+
+menuBtn.addEventListener("click", (e) => {
+  e.stopPropagation();
+  menuEl.hidden = !menuEl.hidden;
+});
+
+document.addEventListener("click", (e) => {
+  if (!menuEl.hidden && !menuEl.contains(e.target) && e.target !== menuBtn) {
+    menuEl.hidden = true;
+  }
+});
+
+menuEl.addEventListener("click", (e) => {
+  const btn = e.target.closest("button[data-action]");
+  if (!btn) return;
+  const action = btn.dataset.action;
+  menuEl.hidden = true;
+
+  if (action === "export") exportLibrary();
+  else if (action === "import") importInput.click();
+  else if (action === "clear") {
+    if (!userItems.length) { toast("You don't have any custom items"); return; }
+    if (!confirm("Clear all custom items? Defaults from code will remain.")) return;
+    userItems = [];
+    saveUserItems();
+    renderGrid();
+    toast("Custom items cleared");
+  }
+});
+
+function exportLibrary() {
+  const payload = {
+    version: 1,
+    exported: new Date().toISOString(),
+    items: combinedItems().map(({ _isDefault, ...rest }) => rest)
+  };
+  const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "streamdeck-library.json";
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+  toast("Library exported");
+}
+
+importInput.addEventListener("change", () => {
+  const file = importInput.files && importInput.files[0];
+  if (file) importLibrary(file);
+  importInput.value = "";
+});
+
+function importLibrary(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      const raw = Array.isArray(data) ? data : data.items;
+      if (!Array.isArray(raw)) throw new Error("File does not contain an items array");
+
+      const cleaned = raw
+        .filter(x => x && typeof x.title === "string" && typeof x.src === "string")
+        .map(x => ({
+          _id: uid(),
+          title: x.title.trim(),
+          src:   x.src.trim(),
+          thumb:  typeof x.thumb  === "string" && x.thumb  ? x.thumb  : undefined,
+          poster: typeof x.poster === "string" && x.poster ? x.poster : undefined
+        }));
+
+      if (!cleaned.length) throw new Error("No valid items found");
+
+      userItems = cleaned;
+      saveUserItems();
+      renderGrid();
+      toast("Imported " + cleaned.length + " item" + (cleaned.length === 1 ? "" : "s"));
+    } catch (err) {
+      toast("Import failed: " + err.message, "error");
+    }
+  };
+  reader.readAsText(file);
+}
+
+/* =========================================================================
+   Buttons & keyboard
+   ========================================================================= */
+
+$("#addBtn").addEventListener("click", () => openForm(null));
+$("#emptyAddBtn").addEventListener("click", () => openForm(null));
 
 document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !overlayEl.hidden) closePlayer();
+  if (e.key !== "Escape") return;
+  if (!formOverlay.hidden) { closeForm(); return; }
+  if (!overlayEl.hidden)   { closePlayer(); }
 });
 
-/* ---------- init ---------- */
-buildGrid();
+/* =========================================================================
+   Init
+   ========================================================================= */
+
+renderGrid();
 </script>
 </body>
 </html>
